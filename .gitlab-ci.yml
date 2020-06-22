@@ -1,0 +1,41 @@
+.data-warehouse:
+  image: node:12-alpine
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - data-warehouse/node_modules
+  before_script:
+    - cd data-warehouse
+  only:
+    changes:
+      - data-warehouse/**/*
+      - .gitab-ci.yml
+
+build data-warehouse:
+  extends: .data-warehouse
+  stage: build-be
+  script:
+    - yarn
+    - yarn build
+  artifacts:
+    paths:
+      - data-warehouse/node_modules
+
+lint data-warehouse:
+  extends: .data-warehouse
+  stage: test-be
+  script:
+    - yarn lint
+
+test data-warehouse:
+  extends: .data-warehouse
+  stage: test-be
+  coverage: /All\sfiles.*?\s+\d+.\d+.*?\s+(\d+.\d+)/
+  script:
+    - yarn test --coverage
+
+deploy:
+  extends: .data-warehouse
+  stage: deploy-be
+  script:
+    - echo "TODO"

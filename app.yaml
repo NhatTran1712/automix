@@ -1,0 +1,4 @@
+runtime: nodejs12
+
+env_variables:
+  CORS_ORIGINS: "http://localhost:4000"
