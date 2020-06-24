@@ -25,14 +25,11 @@ export class DocumentResolver {
 
     if (branchId) {
       this.documentService.setBranch(branchId)
-
       document = await this.documentService.getDocumentById(id)
-
       if (document) {
-        document.member = await this.meService.getMemberById()
+        document.member = await this.meService.getMemberById(document.member.id)
       }
     }
-
     return document;
   }
 

@@ -38,11 +38,11 @@ export class Member {
       },
     }
   }
-  // constructor() {
-  //   this.id = '123-123-123-123'
-  //   this.access = Access.MEMBER
-  //   this.branch = Branch.SA
-  // }
+  constructor() {
+    this.id = '123-123-123-123'
+    this.access = Access.MEMBER
+    this.branch = Branch.SA
+  }
 }
 
 export const { Connection: MemberConnection, Edge: MemberConnectionEdge } = connectionTypes('Member', Member)

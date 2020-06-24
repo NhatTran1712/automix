@@ -12,7 +12,8 @@ export class Repository {
     }
 
     // TODO: setup environment
-    private firebaseConfig: FirebaseFirestore.Settings = {
+    private firebaseConfig: FirebaseFirestore.Settings = 
+    {
       apiKey: 'AIzaSyBXrWSCwyMVcpbpHKPZCGY9MgeX71dvLMo',
       authDomain: 'our-1app.firebaseapp.com',
       databaseURL: 'https://our-1app.firebaseio.com',
@@ -41,6 +42,12 @@ export class Repository {
       converter = converter || defaultConverter<T>()
 
       return await this._collection.withConverter<T>(converter).get()
+    }
+
+    public addData(data: FirebaseFirestore.DocumentData) {
+      let result = this._collection.add(data);
+
+      return result;
     }
 }
 
