@@ -2,26 +2,19 @@ import { Service } from 'typedi'
 import { Member, MeInput } from '../types'
 import { Repository } from 'utils/services/repository'
 import { get } from 'lodash'
-import { members } from 'members'
 
 @Service()
 export class MemberService {
-  // private me: Member | null
-
-  constructor(private repo: Repository) {
-    // this.me = new Member() // TEMP
+  constructor(private repo: Repository){
   }
 
-  setBranch(branchId: string) {
-    // this.me = newMe
-    this.repo.setCollection(`branches/${branchId}/members`)
+  setMemberCollection() {
+    this.repo.setCollection('members')
   }
 
   public async getMemberById(id: string): Promise<Member | null> {
-    // return this.me
     const converter = Member.getConverter(id)
     const memberSnap = await this.repo.getDoc<Member>(id, converter)
-
     return memberSnap ? memberSnap.data() : undefined
   }
 
@@ -35,15 +28,16 @@ export class MemberService {
     })
   }
 
-  setMember(member: MeInput) {
+  addMember(member: MeInput): Member {
+    console.log("MemberService -> addMember -> member", member)
     let newMember = new Member();
 
-    newMember.id = member.id;
-    // newMember.access = member.access;
-    // newMember.branch = member.branch;
-    // newMember.address = member.address;
-    // newMember.employment = member.employment;
+    newMember.id = member.id ? member.id : newMember.id;
+    newMember.access = member.access ? member.access : newMember.access;
+    newMember.branch = member.branch ? member.branch : newMember.branch;
+    newMember.address = member.address ? member.address : newMember.address;
+    newMember.employment = member.employment ? member.employment : newMember.employment;
 
-    return this.repo.addData(newMember);
+    return Member.getConverter().fromFirestore(this.repo.add(newMember));
   }
 }

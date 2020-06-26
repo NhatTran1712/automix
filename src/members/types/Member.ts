@@ -1,18 +1,21 @@
 import { Directive, Field, ID, ObjectType } from 'type-graphql'
 import { Access, Branch } from 'utils'
-import { Address, Employment } from 'utils/types'
+import { Address, Employment, Node } from 'utils/types'
 import { connectionTypes } from '../../utils/connectionTypes'
+import { IsEnum } from 'class-validator'
 
 @Directive('@key(fields: "id")')
 @ObjectType()
-export class Member {
+export class Member extends Node {
   @Field(type => ID)
   public id: string
 
   @Field(type => Access)
+  @IsEnum(Access)
   public access: Access
 
   @Field(type => Branch)
+  @IsEnum(Access)
   public branch: Branch
 
   @Field(type => Address, { nullable: true })
@@ -38,11 +41,11 @@ export class Member {
       },
     }
   }
-  constructor() {
-    this.id = '123-123-123-123'
-    this.access = Access.MEMBER
-    this.branch = Branch.SA
-  }
+  // constructor() {
+  //   this.id = '123-123-123-123'
+  //   this.access = Access.MEMBER
+  //   this.branch = Branch.SA
+  // }
 }
 
 export const { Connection: MemberConnection, Edge: MemberConnectionEdge } = connectionTypes('Member', Member)
