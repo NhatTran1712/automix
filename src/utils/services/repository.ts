@@ -2,7 +2,6 @@ import { Service } from 'typedi';
 import { Firestore } from '@google-cloud/firestore';
 import { UUID } from 'utils/AuthContext';
 import { Member } from 'members/types/Member';
-import { json } from 'express';
 
 @Service()
 export class Repository {
@@ -34,6 +33,10 @@ export class Repository {
     this._collection = this._store.collection(path)
   }
 
+  public getCollection() {
+    return this._collection;
+  }
+
   public async getDoc<T>(id: UUID, converter?: FirebaseFirestore.FirestoreDataConverter<T>) {
     converter = converter || defaultConverter<T>()
 
@@ -48,13 +51,37 @@ export class Repository {
 
   public add(data: Member) {
     console.log("Repository -> add -> data", data)
-    let result = this._collection.doc().set({
-      id: data.id,
-      access: data.access,
-      branch: data.branch
-    })
-    console.log("Repository -> add -> result", JSON.stringify(result, null, 4))
-    return result;
+    try {
+      if(data.id) {
+        this._collection.doc(data.id).set({
+          access: data.access,
+          branch: data.branch
+        })
+      } else {
+        this._collection.add({
+          access: data.access,
+          branch: data.branch
+        }).then(added => data.id = added.id)
+      }
+    } catch(e) {
+      console.log("Repository -> add -> e", e)
+      throw e;
+    } finally {
+      console.log("Repository -> add -> data", data)
+      return data;
+    }
+  }
+
+  public deleteDoc(id: UUID): Boolean {
+    try {
+      this._collection.doc(id).delete();
+    } catch(e) {
+      console.log("deleteDoc false");
+      return false;
+    } finally {
+      console.log("deleteDoc true");
+      return true;
+    }
   }
 }
 

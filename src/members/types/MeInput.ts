@@ -9,13 +9,13 @@ export class MeInput implements Partial<Member> {
   @Field(type => ID, { nullable: true })
   id?: string
 
-  @Field(type => Access, { nullable: true })
+  @Field(type => Access)
   @IsEnum(Access)
-  access?: Access
+  access: Access
 
-  @Field(type => Branch, { nullable: true })
+  @Field(type => Branch)
   @IsEnum(Branch)
-  branch?: Branch
+  branch: Branch
 
   @Field({ nullable: true })
   address?: AddressInput

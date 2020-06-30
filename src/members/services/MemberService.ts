@@ -8,8 +8,9 @@ export class MemberService {
   constructor(private repo: Repository){
   }
 
-  setMemberCollection() {
-    this.repo.setCollection('members')
+  setMemberCollection(branchId: string) {
+    // this.repo.setCollection('members')
+    this.repo.setCollection(`branches/${branchId}/members`)
   }
 
   public async getMemberById(id: string): Promise<Member | null> {
@@ -28,16 +29,19 @@ export class MemberService {
     })
   }
 
-  addMember(member: MeInput): Member {
+  addMember(member: MeInput): Member | null {
     console.log("MemberService -> addMember -> member", member)
     let newMember = new Member();
 
     newMember.id = member.id ? member.id : newMember.id;
-    newMember.access = member.access ? member.access : newMember.access;
-    newMember.branch = member.branch ? member.branch : newMember.branch;
-    newMember.address = member.address ? member.address : newMember.address;
-    newMember.employment = member.employment ? member.employment : newMember.employment;
+    newMember.access = member.access;
+    newMember.branch = member.branch;
+    newMember.address = member.address;
+    newMember.employment = member.employment;
+    return this.repo.add(newMember);
+  }
 
-    return Member.getConverter().fromFirestore(this.repo.add(newMember));
+  public deleteMemberById(id: string): Boolean {
+    return this.repo.deleteDoc(id);
   }
 }

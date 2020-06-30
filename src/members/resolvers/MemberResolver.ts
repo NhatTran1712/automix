@@ -16,32 +16,56 @@ export class MemberResolver {
   @Query(returns => Member, { nullable: true })
   async getMember(
     @Arg('id') id: string,
-    // @Ctx() context: any,
+    @Ctx() context: any,
   ): Promise<Member | null> {
-    this.memberService.setMemberCollection();
-    return await this.memberService.getMemberById(id);
+    const branchId = get(context, 'auth.user.branch', '');
+
+    if (branchId) {
+      this.memberService.setMemberCollection(branchId);
+      return await this.memberService.getMemberById(id);
+    }
+    throw new Error(`Branch ${branchId} is missing`);
   }
 
   @Authorized(Access.ADMIN)
   @Query(returns => MemberConnection)
   async getMembers(
     @Args(type => GetAllMembersArguments) arguments_: GetAllMembersArguments,
-    // @Ctx() context: any,
+    @Ctx() context: any,
   ): Promise<Connection<Member>> {
-    this.memberService.setMemberCollection()
-    console.log("MemberResolver 1")
-    const members = await this.memberService.getMembers()
-    console.log("MemberResolver -> members", members)
-    return connectionFromArray(members || [], arguments_)
+    const branchId = get(context, 'auth.user.branch', '');
+
+    if (branchId) {
+      console.log("MemberResolver -> branchId", branchId)
+      this.memberService.setMemberCollection(branchId);
+      const members = await this.memberService.getMembers()
+      console.log("MemberResolver -> members", members)
+      return connectionFromArray(members || [], arguments_)
+    }
+    throw new Error(`Branch ${branchId} is missing`);
   }
 
   @Authorized(Access.ADMIN)
   @Mutation(returns => Member)
   async createMember(
-    @Args() memberInput: MeInput
+    @Args() memberInput: MeInput,
+    @Ctx() context: any,
   ): Promise<Member> {
-    console.log("MemberResolver -> memberInput", memberInput)
+    const branchId = get(context, 'auth.user.branch', '');
+
+    if(branchId) {
+      console.log("MemberResolver -> memberInput", memberInput)
+      this.memberService.setMemberCollection(branchId)
+      return this.memberService.addMember(memberInput);
+    }
+    throw new Error(`Branch ${branchId} is missing`);
+  }
+
+  @Authorized(Access.ADMIN)
+  @Mutation(returns => Boolean)
+  deleteMember(@Arg('id') id: string) {
+    console.log("MemberResolver -> deleteMember -> id", id)
     this.memberService.setMemberCollection()
-    return this.memberService.addMember(memberInput);
+    return this.memberService.deleteMemberById(id);
   }
 }
