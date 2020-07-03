@@ -24,11 +24,14 @@ export class DocumentService {
 
   public async getDocuments(): Promise<Document[]> {
     const converer = Document.getConverter()
+    console.log("DocumentService")
     const documentSnap = await this.repo.query<Document, any>(undefined, converer)
     const result = get(documentSnap, 'docs', []) as any[]
-
+    for (let data of result) {
+      console.log(data.id);
+    }
     return result.map((d: any) => {
-      return { ...d.data(), id: d.id }
+      return { ...d.id }
     })
   }
 }

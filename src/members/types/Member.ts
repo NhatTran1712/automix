@@ -1,5 +1,5 @@
 import { Directive, Field, ID, ObjectType } from 'type-graphql'
-import { Access, Branch } from 'utils'
+import { Access, Branch, UUID } from 'utils'
 import { Address, Employment, Node } from 'utils/types'
 import { connectionTypes } from '../../utils/connectionTypes'
 import { IsEnum } from 'class-validator'
@@ -25,10 +25,11 @@ export class Member extends Node {
   @Field(type => Employment, { nullable: true })
   public employment?: Employment
 
-  static getConverter(id?: string) {
+  static getConverter(id?: UUID) {
     return {
-      toFirestore() {
-        return {}
+      toFirestore(data: Member) {
+        return {
+        }
       },
       fromFirestore(data: FirebaseFirestore.DocumentData) {
         return {
@@ -41,11 +42,6 @@ export class Member extends Node {
       },
     }
   }
-  // constructor() {
-  //   this.id = '123-123-123-123'
-  //   this.access = Access.MEMBER
-  //   this.branch = Branch.SA
-  // }
 }
 
 export const { Connection: MemberConnection, Edge: MemberConnectionEdge } = connectionTypes('Member', Member)

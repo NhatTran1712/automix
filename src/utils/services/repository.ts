@@ -1,7 +1,6 @@
 import { Service } from 'typedi';
 import { Firestore } from '@google-cloud/firestore';
 import { UUID } from 'utils/AuthContext';
-import { Member } from 'members/types/Member';
 
 @Service()
 export class Repository {
@@ -39,48 +38,39 @@ export class Repository {
 
   public async getDoc<T>(id: UUID, converter?: FirebaseFirestore.FirestoreDataConverter<T>) {
     converter = converter || defaultConverter<T>()
-
     return await this._collection.withConverter<T>(converter).doc(id).get()
+  }
+
+  public setDoc(id: UUID, newDoc: FirebaseFirestore.DocumentData) {
+    this._collection.doc(id).set(JSON.parse(JSON.stringify(newDoc))).catch(e => { throw e });
+    return newDoc;
   }
 
   public async query<T, TParam>(queryParameters: TParam, converter?: FirebaseFirestore.FirestoreDataConverter<T>) {
     converter = converter || defaultConverter<T>()
-
     return await this._collection.withConverter<T>(converter).get()
   }
 
-  public add(data: Member) {
-    console.log("Repository -> add -> data", data)
+  public async addDoc(newDoc: FirebaseFirestore.DocumentData) {
+    let addedDoc;
+
     try {
-      if(data.id) {
-        this._collection.doc(data.id).set({
-          access: data.access,
-          branch: data.branch
-        })
-      } else {
-        this._collection.add({
-          access: data.access,
-          branch: data.branch
-        }).then(added => data.id = added.id)
-      }
+      addedDoc = await this._collection.add(JSON.parse(JSON.stringify(newDoc)));
     } catch(e) {
-      console.log("Repository -> add -> e", e)
       throw e;
     } finally {
-      console.log("Repository -> add -> data", data)
-      return data;
+      newDoc.id = addedDoc.id;
+      return newDoc;
     }
   }
 
-  public deleteDoc(id: UUID): Boolean {
+  public deleteDoc(id: UUID): UUID {
     try {
       this._collection.doc(id).delete();
     } catch(e) {
-      console.log("deleteDoc false");
-      return false;
+      throw e;
     } finally {
-      console.log("deleteDoc true");
-      return true;
+      return id;
     }
   }
 }

@@ -10,7 +10,7 @@ import { Connection, connectionFromArray } from 'utils/connectionTypes'
 export class DocumentResolver {
   constructor(
     private readonly documentService: DocumentService,
-    private readonly meService: MemberService,
+    private readonly memberService: MemberService,
   ) {
   }
 
@@ -27,7 +27,8 @@ export class DocumentResolver {
       this.documentService.setBranch(branchId)
       document = await this.documentService.getDocumentById(id)
       if (document) {
-        document.member = await this.meService.getMemberById(document.member.id)
+        console.log("DocumentResolver -> document.member.id", document.member.id)
+        document.member = await this.memberService.getMemberById(document.member.id)
       }
     }
     return document;
@@ -43,9 +44,9 @@ export class DocumentResolver {
 
     if (branchId) {
       this.documentService.setBranch(branchId)
-
+      console.log("DocumentResolver")
       const documents = await this.documentService.getDocuments()
-
+      console.log("DocumentResolver -> documents", documents)
       return connectionFromArray(documents || [], arguments_)
     }
 
