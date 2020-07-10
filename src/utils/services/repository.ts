@@ -73,6 +73,11 @@ export class Repository {
       return id;
     }
   }
+
+  public async updateDoc(updateDoc: FirebaseFirestore.UpdateData) {
+    await this._collection.doc(updateDoc.id).update(updateDoc).catch(err => { throw err })
+    return updateDoc;
+  }
 }
 
 function defaultConverter<T>(): FirebaseFirestore.FirestoreDataConverter<T> {

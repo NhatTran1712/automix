@@ -38,6 +38,7 @@ export class MemberResolver {
     if (branchId) {
       this.memberService.setMemberCollection(branchId);
       const members = await this.memberService.getMembers()
+      console.log("MemberResolver -> members", members)
       return connectionFromArray(members || [], arguments_)
     }
     throw new Error(`Branch ${branchId} is missing`);

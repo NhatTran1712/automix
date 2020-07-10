@@ -4,6 +4,7 @@ import { StaticResource } from 'utils/types/StaticResource'
 import { Member } from './Member'
 import { UUID } from 'utils'
 import { Node } from 'utils/types'
+import { get } from 'lodash'
 
 @ObjectType()
 export class DocumentField {
@@ -44,7 +45,7 @@ export class Document extends Node {
             return { key, value: data.fields[key] } as DocumentField
           }),
           member: {
-            id: data.member.id,
+            id: get(data, 'member.id', ''),
           },
           pdf: data.pdf,
           signature: data.signature,
