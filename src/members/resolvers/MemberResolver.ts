@@ -1,4 +1,4 @@
-import { Query, Resolver, Authorized, Arg, Ctx, Args, Mutation } from 'type-graphql'
+import { Query, Resolver, Authorized, Arg, Ctx, Args, Mutation, Root } from 'type-graphql'
 import { Member, MemberConnection, MeInput } from '../types'
 import { MemberService } from '../services'
 import { Access } from 'utils/AuthContext'
@@ -47,7 +47,7 @@ export class MemberResolver {
   @Authorized(Access.ADMIN)
   @Mutation(returns => Member)
   async createMember(
-    @Args() memberInput: MeInput,
+    @Arg("data") memberInput: MeInput,
     @Ctx() context: any,
   ): Promise<Member> {
     const branchId = get(context, 'auth.user.branch', '');

@@ -1,10 +1,10 @@
-import { Field, ID, ArgsType } from 'type-graphql'
+import { Field, ID, InputType } from 'type-graphql'
 import { IsEnum } from 'class-validator'
 import { Access, Branch } from 'utils'
 import { EmploymentInput, AddressInput } from 'utils/types'
 import { Member } from '../types'
 
-@ArgsType()
+@InputType()
 export class MeInput implements Partial<Member> {
   @Field(type => ID, { nullable: true })
   id?: string

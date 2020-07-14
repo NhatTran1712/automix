@@ -42,7 +42,7 @@ export class DocumentService {
     let document = new Document();
 
     document.id = updateDoc.id;
-    document.member = updateDoc.member;
+    document.member = updateDoc.idMember;
     document.fields = updateDoc.fields;
     document.pdf = updateDoc.pdf;
     document.signature = updateDoc.signature;
